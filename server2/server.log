@@ -1,0 +1,22 @@
+[02/04/23 06:18:49 PM]: Starting backdoor server at address 0.0.0.0:28115
+[02/04/23 06:18:49 PM]: server.py PID = 751, PGID = 751
+[02/04/23 06:18:57 PM]: ERROR: Exception in handle():
+[02/04/23 06:18:57 PM]: -----------------------------------------
+[02/04/23 06:18:57 PM]: Traceback (most recent call last):
+  File "server.py", line 1012, in handle
+    stream = self._do_auth()
+  File "server.py", line 987, in _do_auth
+    raise Exception
+Exception
+[02/04/23 06:18:57 PM]: -----------------------------------------
+[02/04/23 06:18:57 PM]: SERVER: Client 192.168.43.209:49501 disconnected
+[02/04/23 06:19:07 PM]: ERROR: Exception in handle():
+[02/04/23 06:19:07 PM]: -----------------------------------------
+[02/04/23 06:19:07 PM]: Traceback (most recent call last):
+  File "server.py", line 1012, in handle
+    stream = self._do_auth()
+  File "server.py", line 987, in _do_auth
+    raise Exception
+Exception
+[02/04/23 06:19:07 PM]: -----------------------------------------
+[02/04/23 06:19:07 PM]: SERVER: Client 192.168.43.209:57225 disconnected

@@ -7,7 +7,7 @@ import select, socket, urllib.request, urllib.parse, urllib.error
 import json, cgi, mimetypes
 from threading import Thread
 from optparse import OptionParser, make_option
-
+import binascii
 try: 
 
     # https://pypi.org/project/M2Crypto/
@@ -58,7 +58,7 @@ except ImportError:
     print('ERROR: defusedxml is not installed')
     exit(-1)
 
-from server2.config2 import Conf
+from config2 import Conf
 
 BUFF_SIZE = 0x200
 
@@ -903,7 +903,7 @@ class ClientDispatcher(object):
 
     def _recv(self, size = None):
 
-        ret = ''
+        ret = b''
 
         if size is None:
 
@@ -912,7 +912,7 @@ class ClientDispatcher(object):
         while len(ret) < size:
             
             # receive specified amount of data
-            data = self.request.recv(size - len(ret))
+            data = self.request.recv(int(size - len(ret)))
             assert len(data) > 0
 
             ret += data
@@ -934,9 +934,7 @@ class ClientDispatcher(object):
         return ret
 
     def _do_auth(self):
-
         if self.crypt_send is not None and self.crypt_recv is not None:
-
             return True
 
         class RC4Stream(object):
@@ -982,7 +980,8 @@ class ClientDispatcher(object):
             raise Exception        
 
         # check server certificate digest
-        digest = ''.join(['%.2X' % ord(b) for b in digest])
+        digest =binascii.hexlify(digest).decode("ascii")
+        digest = ''.join([str(b) for b in digest])
         if digest != self.server_cert_digest:
 
             raise Exception

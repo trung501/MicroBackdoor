@@ -2,20 +2,17 @@
 
 import sys, os, socket
 from struct import pack, unpack
-
-from server.config import Conf
-from server.server import KeysManager
+from server2.config2 import Conf
+from server2.server import KeysManager
 
 inet_aton = lambda v: unpack('I', socket.inet_aton(v))[0]
 
-CONFIG_SECTION = '.conf'
+CONFIG_SECTION = b'.conf\x00\x00\x00'
 CONFIG_FMT = '=32sH'
 CONFIG_LEN = 32 + 2
 
 def _config_offset(pe):
-        
     for section in pe.sections:
-
         # find .conf section of payload image
         if section.Name[: len(CONFIG_SECTION)] == CONFIG_SECTION:
 
@@ -30,12 +27,12 @@ def _config_get(pe, data):
     return unpack(CONFIG_FMT, data[offs : offs + CONFIG_LEN])        
 
 def _config_set(pe, data, cert, *args):
-
+    args=bytes(args[0], 'utf-8'), args[1]
     offs = _config_offset(pe)
 
     print('\"%s\" section at RVA 0x%x' % (CONFIG_SECTION, offs))
 
-    return data[: offs] + pack(CONFIG_FMT, *args) + cert + \
+    return data[: offs] + pack(CONFIG_FMT, *args) + cert.encode("utf-8") + \
            data[offs + CONFIG_LEN + len(cert) :]
 
 def build(src, addr, cert, dst = None):
