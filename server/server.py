@@ -220,7 +220,6 @@ class ClientHelper(object):
         # validate received ID
         assert len(data) == 128 / 8 * 2
         assert re.search('^[A-Fa-f0-9]+$', data) is not None
-
         return data
 
     def get_info(self):

@@ -202,25 +202,23 @@ class ClientHelper(object):
     def get_id(self):
 
         assert self.sock is not None
-
         # query client ID
         self.sendall('id\n')
 
         ret = ''
 
         while len(ret) == 0 or ret[-1] != '\n':
-            
-            data = self.recv(BUFF_SIZE)
+            data = self.recv(BUFF_SIZE).decode()
             assert len(data) > 0
 
             ret += data
 
         data = data.strip()
+        print("kietbeo",data)
 
         # validate received ID
         assert len(data) == 128 / 8 * 2
         assert re.search('^[A-Fa-f0-9]+$', data) is not None
-
         return data
 
     def get_info(self):
@@ -234,13 +232,13 @@ class ClientHelper(object):
 
         while len(ret) == 0 or ret[-1] != '\n':
             
-            data = self.recv(BUFF_SIZE)
+            data = self.recv(BUFF_SIZE).decode()
             assert len(data) > 0
 
             ret += data
 
         # parse and validate received information
-        ret = ret.decode('UTF-8').strip().split('|')
+        ret = ret.strip().split('|')
 
         return ret if len(ret) == 6 else None
 
@@ -281,14 +279,14 @@ class ClientHelper(object):
         assert self.sock is not None
 
         # send command string
-        self.sendall(cmd.encode('UTF-8') + '\n')
+        self.sendall(cmd.encode('UTF-8') + b'\n')
 
         ret, code = '', None
 
         while True:
 
             # receive the command output
-            data = self.recv(BUFF_SIZE)
+            data = self.recv(BUFF_SIZE).decode()
             assert len(data) > 0            
 
             m = self._is_end_of_output(data)
@@ -303,7 +301,7 @@ class ClientHelper(object):
 
                 break
 
-        ret = ret.decode('UTF-8')
+        # ret = ret.decode('UTF-8')
 
         if stream is not None: 
 
@@ -333,8 +331,8 @@ class ClientHelper(object):
             if log:
 
                 # log command output
-                fd.write('[%s]: EXIT CODE: 0x%.8x\n\n' % (log_timestamp(), code))
-                fd.write(data.encode('UTF-8') + '\n')
+                # fd.write('[%s]: EXIT CODE: 0x%.8x\n\n' % (log_timestamp(), code))
+                fd.write(data.encode('UTF-8') + b'\n')
 
             return data, code
 
@@ -529,7 +527,6 @@ class ClientHelper(object):
         return ret
 
     def file_get(self, path, local_path):
-
         ret = False
 
         assert len(path) > 0
@@ -540,7 +537,7 @@ class ClientHelper(object):
                   (self.client_id, path, local_path))
 
         # send download file command
-        self.sendall('fget ' + path.encode('UTF-8') + '\n')
+        self.sendall(b'fget ' + path.encode('UTF-8') + b'\n')
 
         with open(local_path.encode('UTF-8'), 'wb') as fd:            
 
@@ -660,12 +657,10 @@ class ClientHelper(object):
         self.redis_connect()
 
         log_write('client_add(%s)\n' % self.client_id)
-
         # add client info to the database
         self.redis.set(self.client_id, json.dumps(props))
 
     def client_get(self, client_id = None):
-
         client_id = self.client_id if client_id is None else client_id
         assert client_id is not None
 
@@ -673,8 +668,8 @@ class ClientHelper(object):
 
         # get client info from the database
         data = self.redis.get(client_id)
-
         # create Client instance
+        client_id = client_id.decode('UTF-8') if isinstance(client_id, bytes) else client_id
         return data if data is None else Client(client_id, **json.loads(data))
 
     def client_del(self):
@@ -899,7 +894,7 @@ class ClientDispatcher(object):
         # load certificate and private key of server
         self.server_key = M2Crypto.RSA.load_key(self.keys_manager.get_key_path(Conf.CERT_NAME))
         self.server_cert = M2Crypto.X509.load_cert(self.keys_manager.get_cert_path(Conf.CERT_NAME))
-        self.server_cert_digest = cert_digest(Conf.CERT_NAME)
+        self.server_cert_digest = cert_digest(Conf.CERT_NAME).lower()
 
     def _recv(self, size = None):
 
@@ -982,6 +977,8 @@ class ClientDispatcher(object):
         # check server certificate digest
         digest =binascii.hexlify(digest).decode("ascii")
         digest = ''.join([str(b) for b in digest])
+        print(digest)
+        print(self.server_cert_digest)
         if digest != self.server_cert_digest:
 
             raise Exception
@@ -1010,11 +1007,10 @@ class ClientDispatcher(object):
 
             # perform authentication
             stream = self._do_auth()
-
             # create client instance 
             helper = ClientHelper(sock = stream)
             helper.client_id = helper.get_id()
-
+            print("kiet ====================================== > ",helper.client_id)
             # create folders for client files
             helper.create_folders()
 
@@ -1041,7 +1037,7 @@ class ClientDispatcher(object):
                 if self.request in read:
 
                     # receive data from the client
-                    data = stream.recv(BUFF_SIZE)
+                    data = stream.recv(BUFF_SIZE).decode()
                     if len(data) == 0: break
 
                     # check for ping from the client
@@ -1052,7 +1048,7 @@ class ClientDispatcher(object):
                     elif self.client_sock is not None: 
 
                         # send data to the main process
-                        self.client_sock.sendall(data)
+                        self.client_sock.sendall(data.encode())
 
                     last_request = time.time()
 
@@ -1063,7 +1059,7 @@ class ClientDispatcher(object):
                     try:                         
 
                         # receive data from the main process
-                        data = self.client_sock.recv(BUFF_SIZE)
+                        data = self.client_sock.recv(BUFF_SIZE).decode()
                         assert len(data) > 0                        
 
                     except: 
