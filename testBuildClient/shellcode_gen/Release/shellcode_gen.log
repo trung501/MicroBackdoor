@@ -1,0 +1,8 @@
+﻿  dll_inject_shellcode.cpp
+  shellcode_gen.cpp
+  stdafx.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Microsoft\VC\v150\Microsoft.CppBuild.targets(1216,5): warning MSB8012: TargetPath(C:\Users\TRUNG\Desktop\MicroBackdoor\Release\shellcode_gen.exe) does not match the Linker's OutputFile property value (C:\Users\TRUNG\Desktop\MicroBackdoor\shellcode_gen.exe). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+  Generating code
+  All 11 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  shellcode_gen.vcxproj -> C:\Users\TRUNG\Desktop\MicroBackdoor\Release\shellcode_gen.exe

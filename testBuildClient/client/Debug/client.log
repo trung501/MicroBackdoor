@@ -1,0 +1,15 @@
+﻿  stdafx.cpp
+  crypt.cpp
+  debug.cpp
+  misc.cpp
+  client.cpp
+  proxy.cpp
+  proxy_http.cpp
+  proxy_socks.cpp
+  rc4.cpp
+  str.cpp
+  Generating Code...
+C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Microsoft\VC\v150\Microsoft.CppBuild.targets(1216,5): warning MSB8012: TargetPath(C:\Users\TRUNG\Desktop\MicroBackdoor\Debug\client.dll) does not match the Linker's OutputFile property value (C:\Users\TRUNG\Desktop\MicroBackdoor\client_debug.dll). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Microsoft\VC\v150\Microsoft.CppBuild.targets(1218,5): warning MSB8012: TargetName(client) does not match the Linker's OutputFile property value (client_debug). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+     Creating library C:\Users\TRUNG\Desktop\MicroBackdoor\Debug\client.lib and object C:\Users\TRUNG\Desktop\MicroBackdoor\Debug\client.exp
+  client.vcxproj -> C:\Users\TRUNG\Desktop\MicroBackdoor\Debug\client.dll
